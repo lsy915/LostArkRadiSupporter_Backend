@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { AuthService } from "./auth.service";
-import { LoginDto, RegisterDto } from "./dto/auth.dto";
+import { Request, Response } from "express";
+import { ConfigService } from "@nestjs/config";
 import { JwtAuthGuard } from "./guard/jwt-auth.guard";
 import { CurrentUser } from "./decorator/current-user.decorator";
 import { User } from "@/user/entity/user.entity";
@@ -9,18 +10,20 @@ import { User } from "@/user/entity/user.entity";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  @ApiOperation({ summary: "회원가입" })
-  @Post("register")
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
-  }
+  @ApiOperation({ summary: "Discord 로그인 시작" })
+  @Get("discord")
+  @UseGuards(AuthGuard("discord"))
+  discordAuth() {}
 
-  @ApiOperation({ summary: "로그인" })
-  @Post("login")
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  @ApiOperation({ summary: "Discord 로그인 콜백" })
+  @Get("discord/callback")
+  @UseGuards(AuthGuard("discord"))
+  discordCallback(@Req() req: Request, @Res() res: Response) {
+    const { accessToken } = req.user as { accessToken: string };
+    const frontUrl = this.configService.get<string>("FRONTURL");
+    return res.redirect(`${frontUrl}?token=${accessToken}`);
   }
 
   @ApiOperation({ summary: "내 정보 조회 (토큰 필요)" })
@@ -28,7 +31,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get("me")
   me(@CurrentUser() user: User) {
-    const { password, ...result } = user;
-    return result;
+    return user;
   }
 }

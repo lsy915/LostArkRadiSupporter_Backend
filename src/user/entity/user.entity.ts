@@ -7,10 +7,16 @@ export class User extends BaseTimeEntity {
   id: string;
 
   @Column({ unique: true })
-  email: string;
+  discordId: string;
 
   @Column()
-  password: string;
+  username: string;
+
+  @Column({ nullable: true })
+  avatar: string;
+
+  @Column({ nullable: true })
+  email: string;
 
   @Column({ nullable: true })
   character: string;
