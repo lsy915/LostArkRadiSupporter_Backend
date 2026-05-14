@@ -2,7 +2,7 @@ import { BaseTimeEntity } from "@/common/entity/base-time.entuty";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Expendition } from "./expendition.entity";
 
-@Entity('character')
+@Entity('characters')
 export class Character {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,10 +16,10 @@ export class Character {
   @Column()
   characterAvgLevel: string;
 
-  @Column()
+  @Column({ nullable: true })
   combatPower: string;
 
-  @Column()
+  @Column({ nullable: true })
   characterImage: string;
 
   @Column({ nullable: true })

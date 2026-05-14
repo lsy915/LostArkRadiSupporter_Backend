@@ -19,7 +19,7 @@ export class User extends BaseTimeEntity {
   @Column({ nullable: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   apiKey: string;
 
   @OneToMany(() => Expendition, (expendition) => expendition.user, { nullable: true })
