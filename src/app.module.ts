@@ -6,6 +6,7 @@ import { getTypeOrmModule } from './common/TypeOrmModule';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ContentsModule } from './contents/contents.module';
+import { ExpenditionModule } from './expendition/expendition.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ContentsModule } from './contents/contents.module';
     UserModule,
     AuthModule,
     ContentsModule,
+    ExpenditionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
