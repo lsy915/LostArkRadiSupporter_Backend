@@ -10,6 +10,15 @@ export class GetGoldIslandResponse {
     type: [String],
   })
   StartTimes: string[];
+
+  @ApiProperty({ example: '슈샤이어', description: '가까운 대륙' })
+  Continent: string;
+
+  @ApiProperty({
+    example: 'https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_98.png',
+    description: '섬 이미지 링크'
+  })
+  IslandIMG: string;
 }
 
 export class GetChaosGateAndFieldBossResponse {

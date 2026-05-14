@@ -5,7 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { lastValueFrom } from "rxjs";
 import { CalendarContent, GoldIslandResult } from "./type/contents.type";
-import { IslandContinentData } from "./data/island.data";
+import { IslandContinentData, IslandImageData } from "./data/island.data";
 
 @Injectable()
 export class ContentsService {
@@ -51,6 +51,7 @@ export class ContentsService {
             ContentsName: content.ContentsName,
             StartTimes: futureTimes,
             Continent: IslandContinentData[content.ContentsName] ?? "알 수 없음",
+            IslandIMG: content.ContentsIcon ?? IslandImageData[content.ContentsName] ?? null,
           };
         })
         .filter(content => content.StartTimes.length > 0);

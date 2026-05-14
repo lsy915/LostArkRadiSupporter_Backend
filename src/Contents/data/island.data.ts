@@ -16,3 +16,22 @@ export const IslandContinentData: Record<string, string> = {
   "라일라이 아일랜드": "볼다이크",
   "하모니 섬": "로헨델",
 };
+
+export const IslandImageData: Record<string, string> = {
+  "우거진 갈대의 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_43.png",
+  "블루홀 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_58.png",
+  "죽음의 협곡": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_35.png",
+  "수라도": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_76.png",
+  "포르페": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_26.png",
+  "환영 나비 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_81.png",
+  "기회의 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_70.png",
+  "잔혹한 장난감 성": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_124.png",
+  "메데이아": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_41.png",
+  "몬테섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_52.png",
+  "스노우팡 아일랜드": 	"https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_98.png",
+  "볼라르 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_8.png",
+  "고요한 안식의 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_74.png",
+  "쿵덕쿵 아일랜드": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_95.png",
+  "라일라이 아일랜드": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_114.png",
+  "하모니 섬": "https://cdn-lostark.game.onstove.com/efui_iconatlas/island_icon/island_icon_55.png",
+};
