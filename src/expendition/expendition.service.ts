@@ -39,7 +39,7 @@ export class ExpenditionService {
     });
 
     if (duplicate) {
-      throw new CustomException(ErrorCode.ALREADY_EXIST, "이미 등록된 캐릭터입니다.");
+      throw new CustomException(ErrorCode.ALREADY_EXIST, "이미 등록된 원정대/캐릭터입니다.");
     }
 
     const user = await this.userRepository.findOne({
