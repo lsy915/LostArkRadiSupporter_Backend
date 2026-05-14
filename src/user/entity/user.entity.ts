@@ -1,4 +1,5 @@
 import { BaseTimeEntity } from "@/common/entity/base-time.entuty";
+import { Expendition } from "@/expendition/entity/expendition.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('user')
@@ -19,5 +20,8 @@ export class User extends BaseTimeEntity {
   email: string;
 
   @Column({ nullable: true })
-  character: string;
+  apiKey: string;
+
+  @OneToMany(() => Expendition, (expendition) => expendition.user, { nullable: true })
+  expenditions: Expendition[] | null;
 }

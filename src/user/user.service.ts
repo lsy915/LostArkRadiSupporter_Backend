@@ -10,4 +10,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async updateApiKey(userId: string, apiKey: string) {
+    await this.userRepository.update(userId, { apiKey });
+  }
 }
