@@ -1,8 +1,28 @@
-import { Controller } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Get, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { UserService } from "./user.service";
+import { JwtAuthGuard } from "@/auth/guard/jwt-auth.guard";
+import { CurrentUser } from "@/auth/decorator/current-user.decorator";
+import { GetUserByDto } from "./docs/user.docs";
 
 @ApiTags('User')
 @Controller('user')
+@ApiBearerAuth()
 export class UserController {
-  
+  constructor(private readonly userService: UserService) {}
+
+  @ApiOperation({
+    summary: '유저 데이터 불러오기 API',
+    description: '로그인한 유저의 데이터를 불러옵니다.'
+  })
+  @ApiOkResponse({
+    description: '유저 데이터 조회 성공',
+    type: GetUserByDto,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async GetUser(@CurrentUser() user) {
+    // 아바타는 https://cdn.discordapp.com/avatars/{discordId}/{avatar}.png 경로로 사용
+    return user;
+  }
 }

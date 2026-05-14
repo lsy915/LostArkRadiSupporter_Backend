@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from "@nestjs/common";
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
 import { Request, Response } from "express";
 
 @Catch(HttpException)
@@ -13,7 +13,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // NestJS 기본 예외는 body.message만 있으므로 fallback 처리
     response.status(status).json({
       statusCode: body.statusCode ?? status,
-      errorType: body.errorType ?? "INTERNAL_SERVER_ERROR",
+      errorType: body.errorType ?? HttpStatus[status] ?? "INTERNAL_SERVER_ERROR",
       message: body.message ?? exception.message,
     });
   }

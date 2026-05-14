@@ -25,12 +25,4 @@ export class AuthController {
     const frontUrl = this.configService.get<string>("FRONTURL");
     return res.redirect(`${frontUrl}?token=${accessToken}`);
   }
-
-  @ApiOperation({ summary: "내 정보 조회 (토큰 필요)" })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @Get("me")
-  me(@CurrentUser() user: User) {
-    return user;
-  }
 }
