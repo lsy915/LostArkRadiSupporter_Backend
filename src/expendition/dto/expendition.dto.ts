@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateExpenditionDto {
   @ApiProperty({ example: '작고 소중한 나의 원정대', description: '원정대 이름' })
@@ -11,4 +11,23 @@ export class CreateExpenditionDto {
   @IsString()
   @IsNotEmpty()
   characterName: string;
+}
+
+export class updateExpenditionDto {
+  @ApiProperty({ example: 1, description: '원정대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class changeExpenditionNameDto {
+  @ApiProperty({ example: 1, description: '원정대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @ApiProperty({ example: '원정대 이름', description: '변경할 원정대 이름' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }
