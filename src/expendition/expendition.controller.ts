@@ -1,6 +1,6 @@
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ExpenditionService } from "./expendition.service";
-import { Body, Controller, Get, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "@/auth/guard/jwt-auth.guard";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
 import { GetExpenditionByDto } from "./docs/expendition.docs";
@@ -60,5 +60,14 @@ export class ExpenditionController {
   @Patch('character')
   async updateCharacter(@CurrentUser() user, @Body() body: updateCharacterDto) {
     return this.expenditionService.updateCharacter(user.id, body);
+  }
+
+  @ApiOperation({
+    summary: '원정대 삭제 (외부API사용X / 캐릭터포함)',
+    description: '원정대를 DB목록에서 제거합니다.(캐릭터포함)'
+  })
+  @Delete()
+  async deleteExpendition(@CurrentUser() user, @Body() body: updateExpenditionDto) {
+    return this.expenditionService.deleteExpendition(user.id, body);
   }
 }

@@ -25,6 +25,6 @@ export class Character {
   @Column({ nullable: true })
   guildName: string;
 
-  @ManyToOne(() => Expendition, (expendition) => expendition.characters)
+  @ManyToOne(() => Expendition, (expendition) => expendition.characters, { onDelete: 'CASCADE' })
   expendition: Expendition;
 }

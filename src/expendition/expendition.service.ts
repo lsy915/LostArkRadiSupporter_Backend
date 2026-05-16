@@ -240,4 +240,16 @@ export class ExpenditionService {
     isCharacter.guildName = apiCharacter.GuildName ?? null;
     return this.characterRepository.save(isCharacter);
   }
+
+  async deleteExpendition(userId: string, dto: updateExpenditionDto) {
+    const expendition = await this.expenditionRepository.findOne({
+      where: { user: { id: userId }, id: dto.id },
+    });
+
+    if (!expendition) {
+      throw new CustomException(ErrorCode.NOT_FOUND, '원정대를 찾을 수 없거나 소유하지 않은 원정대입니다.');
+    }
+
+    return this.expenditionRepository.delete(expendition);
+  }
 }
