@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Expendition } from "./entity/expendition.entity";
 import { Character } from "./entity/character.entity";
-import { changeExpenditionNameDto, CreateExpenditionDto, updateExpenditionDto } from "./dto/expendition.dto";
+import { changeExpenditionNameDto, CreateExpenditionDto, updateCharacterDto, updateExpenditionDto } from "./dto/expendition.dto";
 import { CustomException } from "@/common/exception/custom.exception";
 import { ErrorCode } from "@/common/exception/error-code";
 import { lastValueFrom } from "rxjs";
@@ -64,8 +64,12 @@ export class ExpenditionService {
           headers: { Authorization: `bearer ${user.apiKey}` },
         })
       );
+      if (response.data.length === 0) {
+        throw new CustomException(ErrorCode.NOT_FOUND, "API - 캐릭터를 찾을 수 없습니다.");
+      }
       apiCharacters = response.data;
     } catch (e) {
+      if (e instanceof CustomException) throw e;
       throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "외부API에러 또는 잘못된 API키", "INTERNAL_SERVER_ERROR");
     }
 
@@ -202,5 +206,38 @@ export class ExpenditionService {
 
     expendition.name = dto.name;
     return this.expenditionRepository.save(expendition);
+  }
+
+  async updateCharacter(userId: string, dto: updateCharacterDto) {
+    const isCharacter = await this.characterRepository.findOne({
+      where: { expendition: { id: dto.id }, characterName: dto.characterName },
+    });
+    if (!isCharacter) {
+      throw new CustomException(ErrorCode.NOT_FOUND, 'DB - 캐릭터를 찾을 수 없습니다.');
+    }
+
+    const user = await this.findAPIByUserId(userId);
+
+    let apiCharacter: any;
+    try{
+      const characterAPIUrl = `https://developer-lostark.game.onstove.com/armories/characters/${isCharacter.characterName}/profiles`;
+      const response = await lastValueFrom(
+        this.httpService.get(characterAPIUrl, { headers: { Authorization: `bearer ${user.apiKey}`} })
+      );
+      if (!response.data) {
+        throw new CustomException(ErrorCode.NOT_FOUND, "API - 캐릭터를 찾을 수 없습니다.");
+      }
+      apiCharacter = response.data;
+    } catch (e) {
+      if (e instanceof CustomException) throw e;
+      throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "외부API에러 또는 잘못된 API키", "INTERNAL_SERVER_ERROR");
+    }
+
+    isCharacter.characterAvgLevel = apiCharacter.ItemAvgLevel;
+    isCharacter.characterClassName = apiCharacter.CharacterClassName;
+    isCharacter.combatPower = apiCharacter.CombatPower ?? null;
+    isCharacter.characterImage = apiCharacter.CharacterImage ?? null;
+    isCharacter.guildName = apiCharacter.GuildName ?? null;
+    return this.characterRepository.save(isCharacter);
   }
 }

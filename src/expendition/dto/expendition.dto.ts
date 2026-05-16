@@ -31,3 +31,15 @@ export class changeExpenditionNameDto {
   @IsNotEmpty()
   name: string;
 }
+
+export class updateCharacterDto {
+  @ApiProperty({ example: 1, description: '원정대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @ApiProperty({ example: '캐릭터이름', description: '갱신 할 캐릭터명' })
+  @IsString()
+  @IsNotEmpty()
+  characterName: string;
+}

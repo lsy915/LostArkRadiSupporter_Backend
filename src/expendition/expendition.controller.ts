@@ -4,7 +4,7 @@ import { Body, Controller, Get, Patch, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "@/auth/guard/jwt-auth.guard";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
 import { GetExpenditionByDto } from "./docs/expendition.docs";
-import { changeExpenditionNameDto, CreateExpenditionDto, updateExpenditionDto } from "./dto/expendition.dto";
+import { changeExpenditionNameDto, CreateExpenditionDto, updateCharacterDto, updateExpenditionDto } from "./dto/expendition.dto";
 
 @ApiTags('Expendition')
 @ApiBearerAuth()
@@ -39,7 +39,7 @@ export class ExpenditionController {
     summary: '원정대 업데이트 (외부API사용O / 캐릭터 동기화)',
     description: '로아 API 기준으로 캐릭터 목록을 동기화합니다.'
   })
-  @Patch('/expendition')
+  @Patch('expendition')
   async updateExpendition(@CurrentUser() user, @Body() body: updateExpenditionDto) {
     return this.expenditionService.updateExpendition(user.id, body);
   }
@@ -51,5 +51,14 @@ export class ExpenditionController {
   @Patch('name')
   async changeExpenditionName(@CurrentUser() user, @Body() body: changeExpenditionNameDto) {
     return this.expenditionService.changeExpenditionName(user.id, body);
+  }
+
+  @ApiOperation({
+    summary: '캐릭터 업데이트 (외부API사용O)',
+    description: '로아 API 기준으로 특정 캐릭터 1개를 동기화합니다.'
+  })
+  @Patch('character')
+  async updateCharacter(@CurrentUser() user, @Body() body: updateCharacterDto) {
+    return this.expenditionService.updateCharacter(user.id, body);
   }
 }
