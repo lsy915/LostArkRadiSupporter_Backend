@@ -22,6 +22,9 @@ export class User extends BaseTimeEntity {
   @Column({ type: 'text', nullable: true })
   apiKey: string;
 
+  @Column({ type: 'text', nullable: true })
+  discordAccessToken: string;
+
   @OneToMany(() => Expendition, (expendition) => expendition.user, { nullable: true })
   expenditions: Expendition[] | null;
 }

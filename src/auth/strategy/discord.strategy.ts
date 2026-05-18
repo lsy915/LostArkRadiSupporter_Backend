@@ -14,11 +14,11 @@ export class DiscordStrategy extends PassportStrategy(Strategy, "discord") {
       clientID: configService.get<string>("DISCORD_CLIENT_ID"),
       clientSecret: configService.get<string>("DISCORD_CLIENT_SECRET"),
       callbackURL: configService.get<string>("DISCORD_CALLBACK_URL"),
-      scope: ["identify", "email"],
+      scope: ["identify", "email", "guilds"],
     });
   }
 
-  async validate(_accessToken: string, _refreshToken: string, profile: any) {
-    return this.authService.discordLogin(profile);
+  async validate(accessToken: string, _refreshToken: string, profile: any) {
+    return this.authService.discordLogin(profile, accessToken);
   }
 }

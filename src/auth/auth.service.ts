@@ -13,16 +13,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async discordLogin(profile: any): Promise<{ accessToken: string }> {
+  async discordLogin(profile: any, discordAccessToken: string): Promise<{ accessToken: string }> {
     const { id, username, avatar, email } = profile;
 
     let user = await this.userRepository.findOne({ where: { discordId: id } });
 
     if (!user) {
-      user = this.userRepository.create({ discordId: id, username, avatar, email });
+      user = this.userRepository.create({ discordId: id, username, avatar, email, discordAccessToken });
       await this.userRepository.save(user);
     } else {
-      await this.userRepository.update(user.id, { username, avatar, email });
+      await this.userRepository.update(user.id, { username, avatar, email, discordAccessToken });
     }
 
     return this.issueToken(user);
