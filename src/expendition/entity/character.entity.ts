@@ -1,6 +1,7 @@
 import { BaseTimeEntity } from "@/common/entity/base-time.entuty";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Expendition } from "./expendition.entity";
+import { Raid } from "@/raid/entity/raid.entity";
 
 @Entity('characters')
 export class Character {
@@ -27,4 +28,7 @@ export class Character {
 
   @ManyToOne(() => Expendition, (expendition) => expendition.characters, { onDelete: 'CASCADE' })
   expendition: Expendition;
+
+  @ManyToMany(() => Raid, (raid) => raid.members, { nullable: true })
+  raids: Raid[] | null;
 }

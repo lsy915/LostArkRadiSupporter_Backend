@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ContentsModule } from './contents/contents.module';
 import { ExpenditionModule } from './expendition/expendition.module';
+import { RaidModule } from './raid/raid.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ExpenditionModule } from './expendition/expendition.module';
     AuthModule,
     ContentsModule,
     ExpenditionModule,
+    RaidModule,
   ],
   controllers: [AppController],
   providers: [AppService],
