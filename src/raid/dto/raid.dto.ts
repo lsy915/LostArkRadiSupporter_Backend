@@ -1,11 +1,14 @@
-// export class CreateExpenditionDto {
-//   @ApiProperty({ example: '작고 소중한 나의 원정대', description: '원정대 이름' })
-//   @IsString()
-//   @IsNotEmpty()
-//   name: string;
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-//   @ApiProperty({ example: '캐릭터이름', description: '원정대 내 대표 캐릭터명 (중복 확인 및 로아 API 조회용)' })
-//   @IsString()
-//   @IsNotEmpty()
-//   characterName: string;
-// }
+export class createRaidDto {
+  @ApiProperty({ example: '1750레이드', description: '공격대 이름' })
+  @IsNumber()
+  @IsNotEmpty()
+  characterId: number;
+
+  @ApiProperty({ example: '1750레이드', description: '공격대 이름' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+}

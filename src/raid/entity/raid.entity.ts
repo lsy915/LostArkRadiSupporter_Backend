@@ -10,13 +10,13 @@ export class Raid extends BaseTimeEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   guildId: string;
 
   @ManyToOne(() => Character)
   leader: Character;
 
-  @ManyToMany(() => Character, (character) => character.raids)
+  @ManyToMany(() => Character, (character) => character.raids, { nullable: true })
   @JoinTable()
-  members: Character[];
+  members: Character[] | null;
 }
