@@ -39,7 +39,10 @@ export class RaidService {
     .leftJoinAndSelect('member.expendition', 'memberExp')
     .leftJoin('memberExp.user', 'memberUser')
     .addSelect(['memberUser.username', 'memberUser.avatar'])
-    .where('memberUser.id = :userId', { userId })
+    .innerJoin('raid.members', 'filterMember')
+    .innerJoin('filterMember.expendition', 'filterExp')
+    .innerJoin('filterExp.user', 'filterUser')
+    .where('filterUser.id = :userId', { userId })
     .getMany();
   }
 
