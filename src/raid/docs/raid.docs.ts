@@ -18,3 +18,28 @@ export class GetRaidByDto extends BaseTimeDto{
   @ApiProperty({ type: [GetCharacterByDtoForRaid], description: '공격대 소속 유저 정보' })
   members: [GetCharacterByDtoForRaid]
 }
+
+export class GetMyGuildsByDto {
+  @ApiProperty({ example: "123456789", description: '디스코드 서버 ID' })
+  id: string;
+
+  @ApiProperty({ example: "서버 이름", description: '디스코드 서버 이름' })
+  name: string;
+
+  @ApiProperty({ example: "a_123456789", description: '디스코드 서버 프로필 이미지/GIF', nullable: true })
+  icon: string | null;
+}
+
+export class GetGuildMembersByDto {
+  @ApiProperty({ example: "123456789", description: '디스코드 ID' })
+  discordId: string;
+
+  @ApiProperty({ example: "디스코드 프로필 이름", description: '디스코드 프로필 이름' })
+  username: string;
+
+  @ApiProperty({ example: "a1a2a3a4a5", description: '디스코드 프로필 이미지' })
+  avatar: string;
+
+  @ApiProperty({ example: true, description: '옆로아 회원가입 여부' })
+  isRegistered: boolean;
+}
