@@ -3,7 +3,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from "@ne
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RaidService } from "./raid.service";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
-import { createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { GetGuildMembersByDto, GetMyGuildsByDto, GetRaidByDto } from "./docs/raid.docs";
 
 @ApiTags('Raid')
@@ -95,6 +95,15 @@ export class RaidController {
   @Patch('invite')
   async respondInvite(@CurrentUser() user, @Body() body: RespondInviteDto) {
     return this.raidService.respondInvite(user.id, body);
+  }
+
+  @ApiOperation({
+    summary: '공격대 리더 변경 (외부API사용X)',
+    description: '공격대의 리더를 변경합니다.',
+  })
+  @Patch('leader')
+  async changeLeader(@CurrentUser() user, @Body() body: ChangeLeaderDto) {
+    return this.raidService.changeLeader(user.id, body);
   }
 
   /*

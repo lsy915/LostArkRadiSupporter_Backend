@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Character } from "@/expendition/entity/character.entity";
 import { User } from "@/user/entity/user.entity";
 import { Expendition } from "@/expendition/entity/expendition.entity";
-import { createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { CustomException } from "@/common/exception/custom.exception";
 import { ErrorCode } from "@/common/exception/error-code";
 import { RaidInvite, inviteStatus } from "./entity/raid.invite.entity";
@@ -28,6 +28,7 @@ export class RaidService {
     private readonly httpService: HttpService,
   ) {}
 
+  //
   async findRaidsByUserId(userId: string) {
     return this.raidRepository
     .createQueryBuilder('raid')
@@ -315,5 +316,40 @@ export class RaidService {
     await this.raidInviteRepository.save(invite);
 
     return { message: '초대를 수락했습니다.' };
+  }
+
+  //
+  async changeLeader(userId: string, dto: ChangeLeaderDto) {
+    const raid = await this.raidRepository.findOne({
+      where: { id: dto.raidId },
+      relations: [ 'leader', 'members' ]
+    });
+    if (!raid) {
+      throw new CustomException(ErrorCode.NOT_FOUND, "공격대를 찾을 수 없습니다.");
+    }
+
+    const isLeader = await this.characterRepository.findOne({
+      where: {
+        id: raid.leader.id,
+        expendition: { user: { id: userId } }
+      },
+    });
+    if (!isLeader) {
+      throw new CustomException(ErrorCode.FORBIDDEN, "공대장만 변경할 수 있습니다.");
+    }
+
+    if (dto.characterId === raid.leader.id) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "이미 공대장입니다.");
+    }
+
+    const newLeader = raid.members.find(m => m.id === dto.characterId);
+    if (!newLeader) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "공대원만 공대장으로 임명할 수 있습니다.");
+    }
+
+    raid.leader = newLeader;
+    await this.raidRepository.save(raid);
+
+    return { message: "공대장을 변경했습니다." };
   }
 }

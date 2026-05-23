@@ -48,3 +48,15 @@ export class RespondInviteDto {
   @IsNotEmpty()
   accept: boolean;
 }
+
+export class ChangeLeaderDto {
+  @ApiProperty({ example: 1, description: '공격대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  raidId: number;
+
+  @ApiProperty({ example: 1, description: '리더로 위임 할 캐릭터 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  characterId: number;
+}
