@@ -319,10 +319,10 @@ export class RaidService {
   }
 
   //
-  async changeLeader(userId: string, dto: ChangeLeaderDto) {
+  private async assertLeader(userId: string, raidId: number): Promise<Raid> {
     const raid = await this.raidRepository.findOne({
-      where: { id: dto.raidId },
-      relations: [ 'leader', 'members' ]
+      where: { id: raidId },
+      relations: ['leader', 'members'],
     });
     if (!raid) {
       throw new CustomException(ErrorCode.NOT_FOUND, "공격대를 찾을 수 없습니다.");
@@ -331,12 +331,19 @@ export class RaidService {
     const isLeader = await this.characterRepository.findOne({
       where: {
         id: raid.leader.id,
-        expendition: { user: { id: userId } }
+        expendition: { user: { id: userId } },
       },
     });
     if (!isLeader) {
-      throw new CustomException(ErrorCode.FORBIDDEN, "공대장만 변경할 수 있습니다.");
+      throw new CustomException(ErrorCode.FORBIDDEN, "공대장만 접근할 수 있는 권한입니다.");
     }
+
+    return raid;
+  }
+
+  //
+  async changeLeader(userId: string, dto: ChangeLeaderDto) {
+    const raid = await this.assertLeader(userId, dto.raidId);
 
     if (dto.characterId === raid.leader.id) {
       throw new CustomException(ErrorCode.BAD_REQUEST, "이미 공대장입니다.");
@@ -351,5 +358,24 @@ export class RaidService {
     await this.raidRepository.save(raid);
 
     return { message: "공대장을 변경했습니다." };
+  }
+
+  //
+  async kickMember(userId: string, dto: ChangeLeaderDto) {
+    const raid = await this.assertLeader(userId, dto.raidId);
+
+    if (dto.characterId === raid.leader.id) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "공대장은 추방할 수 없습니다.");
+    }
+
+    const isMember = raid.members.some(m => m.id === dto.characterId);
+    if (!isMember) {
+      throw new CustomException(ErrorCode.NOT_FOUND, "공격대에 해당 공대원이 없습니다.");
+    }
+
+    raid.members = raid.members.filter(m => m.id !== dto.characterId);
+    await this.raidRepository.save(raid);
+
+    return { message: "공대원을 추방했습니다." };
   }
 }

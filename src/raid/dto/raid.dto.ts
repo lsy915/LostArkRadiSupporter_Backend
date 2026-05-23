@@ -55,7 +55,7 @@ export class ChangeLeaderDto {
   @IsNotEmpty()
   raidId: number;
 
-  @ApiProperty({ example: 1, description: '리더로 위임 할 캐릭터 ID' })
+  @ApiProperty({ example: 1, description: '캐릭터 ID' })
   @IsNumber()
   @IsNotEmpty()
   characterId: number;

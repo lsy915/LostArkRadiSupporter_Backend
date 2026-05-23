@@ -106,12 +106,16 @@ export class RaidController {
     return this.raidService.changeLeader(user.id, body);
   }
 
-  /*
-  @Patch()
-  async removeMember() {
-    return;
+  @ApiOperation({
+    summary: '공격대 멤버 추방 (외부API사용X)',
+    description: '공격대의 멤버를 추방합니다.',
+  })
+  @Patch('kick')
+  async kickMember(@CurrentUser() user, @Body() body: ChangeLeaderDto) {
+    return this.raidService.kickMember(user.id, body);
   }
 
+  /*
   @Patch()
   async renameRaid() {
     return;
