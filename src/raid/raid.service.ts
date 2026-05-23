@@ -152,7 +152,7 @@ export class RaidService {
   }
 
   //
-  private async sendDiscordDM(discordId: string, content: string) {
+  private async sendDiscordDM(discordId: string, content: string): Promise<boolean> {
     const headers = { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` };
 
     try {
@@ -171,8 +171,10 @@ export class RaidService {
           { headers }
         )
       );
+
+      return true;
     } catch (e) {
-      // DM 전송 실패해도 초대 자체는 성공으로 처리
+      return false;
     }
   }
 
@@ -202,12 +204,12 @@ export class RaidService {
       throw new CustomException(ErrorCode.NOT_FOUND, '공격대를 찾을 수 없습니다.');
     }
 
-    await this.sendDiscordDM(
+    const dmSent = await this.sendDiscordDM(
       dto.discordId,
       `**[공격대 초대]** \`${inviter.characterName}\`님이 \`${raid.name}\`공격대에 초대했습니다.\n공격대에 합류하세요!\n${process.env.FRONTURL}`
     );
 
-    return { message: '초대가 전송되었습니다.' };
+    return { message: '초대가 전송되었습니다.', dmSent };
   }
 
   //
@@ -275,12 +277,12 @@ export class RaidService {
       })
     );
 
-    await this.sendDiscordDM(
+    const dmSent = await this.sendDiscordDM(
       invitee.expendition.user.discordId,
       `**[공격대 초대]** \`${inviter.characterName}\`님이 공격대에 초대했습니다.\n초대 ID: \`${invite.id}\`\n수락하려면 앱에서 확인해주세요.`
     );
 
-    return { message: '초대가 전송되었습니다.' };
+    return { message: '초대가 전송되었습니다.', dmSent };
   }
 
   //
