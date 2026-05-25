@@ -72,3 +72,10 @@ export class RenameRaidDto {
   @IsNotEmpty()
   raidName: string;
 }
+
+export class RaidIdDto {
+  @ApiProperty({ example: 1, description: '공격대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  raidId: number;
+}

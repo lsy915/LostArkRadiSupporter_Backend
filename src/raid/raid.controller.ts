@@ -1,9 +1,9 @@
 import { JwtAuthGuard } from "@/auth/guard/jwt-auth.guard";
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RaidService } from "./raid.service";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
-import { ChangeLeaderDto, createRaidDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RaidIdDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { GetGuildMembersByDto, GetMyGuildsByDto, GetRaidByDto } from "./docs/raid.docs";
 
 @ApiTags('Raid')
@@ -115,7 +115,6 @@ export class RaidController {
     return this.raidService.kickMember(user.id, body);
   }
 
-  
   @ApiOperation({
     summary: '공격대 이름 변경 (외부API사용X, 공대장만)',
     description: '공격대의 이름을 변경합니다.',
@@ -125,23 +124,22 @@ export class RaidController {
     return this.raidService.renameRaid(user.id, body);
   }
 
-  /*
   @ApiOperation({
     summary: '공격대 탈퇴 (외부API사용X)',
     description: '공격대에서 탈퇴합니다.',
   })
-  @Patch()
-  async outRaid() {
-    return;
+  @Patch('out')
+  async outRaid(@CurrentUser() user, @Body() body: RaidIdDto) {
+    return this.raidService.outRaid(user.id, body);
   }
 
   @ApiOperation({
     summary: '공격대 삭제 (외부API사용X, 공대장만)',
     description: '공격대를 삭제합니다.',
   })
-  @Delete()
-  async deleteRaid() {
-    return;
+  @Delete(':raidId')
+  async deleteRaid(@CurrentUser() user, @Param('raidId', ParseIntPipe) raidId: number) {
+    return this.raidService.deleteRaid(user.id, raidId);
   }
-  */
+  
 }

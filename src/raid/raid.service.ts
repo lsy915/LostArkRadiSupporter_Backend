@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Character } from "@/expendition/entity/character.entity";
 import { User } from "@/user/entity/user.entity";
 import { Expendition } from "@/expendition/entity/expendition.entity";
-import { ChangeLeaderDto, createRaidDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RaidIdDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { CustomException } from "@/common/exception/custom.exception";
 import { ErrorCode } from "@/common/exception/error-code";
 import { RaidInvite, inviteStatus } from "./entity/raid.invite.entity";
@@ -384,8 +384,55 @@ export class RaidService {
     if (raid.name === dto.raidName) {
       throw new CustomException(ErrorCode.BAD_REQUEST, "이미 같은 이름입니다.");
     }
-    
+
     await this.raidRepository.update({ id: dto.raidId }, { name: dto.raidName });
     return { message: "공격대 이름을 변경했습니다." };
+  }
+
+  async outRaid(userId: string, dto: RaidIdDto) {
+    const raid = await this.raidRepository.findOne({
+      where: { id: dto.raidId },
+      relations: ['leader', 'members'],
+    });
+    if (!raid) {
+      throw new CustomException(ErrorCode.NOT_FOUND, "공격대를 찾을 수 없습니다.");
+    }
+
+    const isLeader = await this.characterRepository.findOne({
+      where: {
+        id: raid.leader.id,
+        expendition: { user: { id: userId } },
+      },
+    });
+    if (isLeader) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "공대장은 나갈 수 없습니다. 공대장을 위임해주세요.");
+    }
+
+    const character = await this.raidRepository.findOne({
+      where: {
+        id: dto.raidId,
+        members: { expendition: { user: { id: userId } } },
+      },
+    });
+    const isMember = raid.members.some(m => m.id === character.id);
+    if (!isMember) {
+      throw new CustomException(ErrorCode.NOT_FOUND, "공격대에 해당 공대원이 없습니다.");
+    }
+
+    raid.members = raid.members.filter(m => m.id !== character.id);
+    await this.raidRepository.save(raid);
+
+    return { message: "공격대에서 탈퇴하셨습니다." };
+  }
+
+  async deleteRaid(userId: string, raidId: number) {
+    const raid = await this.assertLeader(userId, raidId);
+
+    if (raid.members.length > 1) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "공대원이 있는 공격대는 삭제할 수 없습니다.");
+    }
+
+    await this.raidRepository.softRemove(raid);
+    return { message: "공격대가 삭제되었습니다." };
   }
 }
