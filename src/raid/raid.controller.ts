@@ -3,7 +3,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from "@ne
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RaidService } from "./raid.service";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
-import { ChangeLeaderDto, createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { GetGuildMembersByDto, GetMyGuildsByDto, GetRaidByDto } from "./docs/raid.docs";
 
 @ApiTags('Raid')
@@ -98,7 +98,7 @@ export class RaidController {
   }
 
   @ApiOperation({
-    summary: '공격대 리더 변경 (외부API사용X)',
+    summary: '공격대 리더 변경 (외부API사용X, 공대장만)',
     description: '공격대의 리더를 변경합니다.',
   })
   @Patch('leader')
@@ -107,7 +107,7 @@ export class RaidController {
   }
 
   @ApiOperation({
-    summary: '공격대 멤버 추방 (외부API사용X)',
+    summary: '공격대 멤버 추방 (외부API사용X, 공대장만)',
     description: '공격대의 멤버를 추방합니다.',
   })
   @Patch('kick')
@@ -115,12 +115,31 @@ export class RaidController {
     return this.raidService.kickMember(user.id, body);
   }
 
+  
+  @ApiOperation({
+    summary: '공격대 이름 변경 (외부API사용X, 공대장만)',
+    description: '공격대의 이름을 변경합니다.',
+  })
+  @Patch('rename')
+  async renameRaid(@CurrentUser() user, @Body() body: RenameRaidDto) {
+    return this.raidService.renameRaid(user.id, body);
+  }
+
   /*
+  @ApiOperation({
+    summary: '공격대 탈퇴 (외부API사용X)',
+    description: '공격대에서 탈퇴합니다.',
+  })
   @Patch()
-  async renameRaid() {
+  async outRaid() {
     return;
   }
 
+  @ApiOperation({
+    summary: '공격대 삭제 (외부API사용X, 공대장만)',
+    description: '공격대를 삭제합니다.',
+  })
+  @Delete()
   async deleteRaid() {
     return;
   }

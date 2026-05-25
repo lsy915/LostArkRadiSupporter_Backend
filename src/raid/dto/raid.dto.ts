@@ -60,3 +60,15 @@ export class ChangeLeaderDto {
   @IsNotEmpty()
   characterId: number;
 }
+
+export class RenameRaidDto {
+  @ApiProperty({ example: 1, description: '공격대 ID' })
+  @IsNumber()
+  @IsNotEmpty()
+  raidId: number;
+
+  @ApiProperty({ example: "공대 이름 변경", description: '변경할 공격대 이름' })
+  @IsString()
+  @IsNotEmpty()
+  raidName: string;
+}

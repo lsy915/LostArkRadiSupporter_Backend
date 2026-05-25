@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Character } from "@/expendition/entity/character.entity";
 import { User } from "@/user/entity/user.entity";
 import { Expendition } from "@/expendition/entity/expendition.entity";
-import { ChangeLeaderDto, createRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
+import { ChangeLeaderDto, createRaidDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { CustomException } from "@/common/exception/custom.exception";
 import { ErrorCode } from "@/common/exception/error-code";
 import { RaidInvite, inviteStatus } from "./entity/raid.invite.entity";
@@ -377,5 +377,15 @@ export class RaidService {
     await this.raidRepository.save(raid);
 
     return { message: "공대원을 추방했습니다." };
+  }
+
+  async renameRaid(userId: string, dto: RenameRaidDto) {
+    const raid = await this.assertLeader(userId, dto.raidId);
+    if (raid.name === dto.raidName) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "이미 같은 이름입니다.");
+    }
+    
+    await this.raidRepository.update({ id: dto.raidId }, { name: dto.raidName });
+    return { message: "공격대 이름을 변경했습니다." };
   }
 }
