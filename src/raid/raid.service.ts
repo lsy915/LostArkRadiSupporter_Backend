@@ -408,14 +408,13 @@ export class RaidService {
       throw new CustomException(ErrorCode.BAD_REQUEST, "공대장은 나갈 수 없습니다. 공대장을 위임해주세요.");
     }
 
-    const character = await this.raidRepository.findOne({
+    const character = await this.characterRepository.findOne({
       where: {
-        id: dto.raidId,
-        members: { expendition: { user: { id: userId } } },
+        raids: { id: dto.raidId },
+        expendition: { user: { id: userId } },
       },
     });
-    const isMember = raid.members.some(m => m.id === character.id);
-    if (!isMember) {
+    if (!character) {
       throw new CustomException(ErrorCode.NOT_FOUND, "공격대에 해당 공대원이 없습니다.");
     }
 
