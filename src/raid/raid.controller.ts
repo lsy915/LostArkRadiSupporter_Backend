@@ -5,6 +5,7 @@ import { RaidService } from "./raid.service";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
 import { ChangeLeaderDto, createRaidDto, RaidIdDto, RenameRaidDto, RespondInviteDto, sendAppInvitationDto, SendInviteDto } from "./dto/raid.dto";
 import { GetGuildMembersByDto, GetMyGuildsByDto, GetRaidByDto } from "./docs/raid.docs";
+import { GetExpenditionByDto } from "@/expendition/docs/expendition.docs";
 
 @ApiTags('Raid')
 @ApiBearerAuth()
@@ -73,6 +74,10 @@ export class RaidController {
   @ApiOperation({
     summary: '디스코드 유저의 원정대 및 캐릭터 목록 조회',
     description: '가입된 디스코드 유저의 원정대와 캐릭터 목록을 반환합니다.'
+  })
+  @ApiOkResponse({
+    description: '디스코드 유저의 원정대 및 캐릭터 목록 조회 성공',
+    type: GetExpenditionByDto,
   })
   @Get('user/characters')
   async getUserCharacters(@Query('discordId') discordId: string) {
