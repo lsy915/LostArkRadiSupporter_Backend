@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Patch, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "@/auth/guard/jwt-auth.guard";
 import { CurrentUser } from "@/auth/decorator/current-user.decorator";
-import { GetUserByDto } from "./docs/user.docs";
+import { GetUserByDto, validSuccessApi } from "./docs/user.docs";
 import { UpdateApiKeyDto } from "./dto/user.dto";
 
 @ApiTags('User')
@@ -33,5 +33,20 @@ export class UserController {
   @Patch('api-key')
   async updateApiKey(@CurrentUser() user, @Body() dto: UpdateApiKeyDto) {
     await this.userService.updateApiKey(user.id, dto.apiKey);
+  }
+
+  @ApiOperation({
+    summary: '로아 API 키 유효성 검증',
+    description: '등록된 API 키가 유효한지 로아 서버에 실시간으로 확인합니다.',
+  })
+  @ApiOkResponse({
+    type: validSuccessApi,
+    description: '로아 API키 증명 성공',
+  })
+  @ApiNotFoundResponse({ description: 'API 키가 등록되지 않았습니다. '})
+  @UseGuards(JwtAuthGuard)
+  @Get('validate-api-key')
+  async validateApiKey(@CurrentUser() user) {
+    return this.userService.validateApiKey(user.id);
   }
 }

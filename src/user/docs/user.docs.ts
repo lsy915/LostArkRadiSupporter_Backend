@@ -26,3 +26,8 @@ export class GetUserByDto extends BaseTimeDto {
   })
   expenditions: GetExpenditionByDto[] | null;
 }
+
+export class validSuccessApi {
+  @ApiProperty({ example: true, description: '로아 API 증명 성공' })
+  vaild: boolean;
+}
