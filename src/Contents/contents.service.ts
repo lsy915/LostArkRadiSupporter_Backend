@@ -17,48 +17,53 @@ export class ContentsService {
   ){
     this.apiKey = this.configService.get<string>('API_KEY');
   }
+  private cachedGoldIslands: { ContentsName: string; StartTimes: string[]; Continent: string; IslandIMG: string | null }[] | null = null;
+  private cachedDate: string = '';
 
   async GetGoldIsland(): Promise<GoldIslandResult[]> {
-    const apiUrl = `https://developer-lostark.game.onstove.com/gamecontents/calendar`
-    try {
-      const response = await lastValueFrom(
-        this.httpService.get<CalendarContent[]>(apiUrl, {
-          headers: {
-            Authorization: `bearer ${this.apiKey}`,
-          },
-        })
-      );
+    const today = new Date().toISOString().slice(0, 10);
 
-      const contents = response.data;
+    if (!this.cachedGoldIslands || this.cachedDate !== today) {
+      try {
+        const response = await lastValueFrom(
+          this.httpService.get<CalendarContent[]>('https://developer-lostark.game.onstove.com/gamecontents/calendar', {
+            headers: { Authorization: `bearer ${this.apiKey}` },
+          })
+        );
 
-      return contents
-        .filter(content => content.CategoryName === "모험 섬")
-        .filter(content =>
-          content.RewardItems.some(reward =>
-            reward.Items.some(item => item.Name === "골드")
+        this.cachedGoldIslands = response.data
+          .filter(content => content.CategoryName === "모험 섬")
+          .filter(content =>
+            content.RewardItems.some(reward =>
+              reward.Items.some(item => item.Name === "골드")
+            )
           )
-        )
-        .map(content => {
-          const goldItem = content.RewardItems
-            .flatMap(reward => reward.Items)
-            .find(item => item.Name === "골드");
+          .map(content => {
+            const goldItem = content.RewardItems
+              .flatMap(reward => reward.Items)
+              .find(item => item.Name === "골드");
 
-          const now = new Date();
-          const futureTimes = (goldItem?.StartTimes ?? content.StartTimes)
-            .filter(time => new Date(time) > now);
+            return {
+              ContentsName: content.ContentsName,
+              StartTimes: goldItem?.StartTimes ?? content.StartTimes,
+              Continent: IslandContinentData[content.ContentsName] ?? "알 수 없음",
+              IslandIMG: content.ContentsIcon ?? IslandImageData[content.ContentsName] ?? null,
+            };
+          });
 
-          return {
-            ContentsName: content.ContentsName,
-            StartTimes: futureTimes,
-            Continent: IslandContinentData[content.ContentsName] ?? "알 수 없음",
-            IslandIMG: content.ContentsIcon ?? IslandImageData[content.ContentsName] ?? null,
-          };
-        })
-        .filter(content => content.StartTimes.length > 0);
+        this.cachedDate = today;
+      } catch (e) {
+        throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "외부API에러", "INTERNAL_SERVER_ERROR");
+      }
     }
-    catch(e) {
-      throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "외부API에러", "INTERNAL_SERVER_ERROR");
-    }
+
+    const now = new Date();
+    return this.cachedGoldIslands
+      .map(island => ({
+        ...island,
+        StartTimes: island.StartTimes.filter(time => new Date(time) > now),
+      }))
+      .filter(island => island.StartTimes.length > 0);
   }
 
   async GetChaosGateAndFieldBoss() {
